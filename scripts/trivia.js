@@ -1,6 +1,7 @@
 var cfenv      = require("cfenv");
 var appEnv     = cfenv.getAppEnv();
 var MyCloudant = require("../lib/my_cloudant");
+var phrases    = require("../lib/talkshow_catch_phrases_generator");
 
 MyCloudant = new MyCloudant(
   appEnv.getServiceCreds(/cloudant/i).username,
@@ -54,7 +55,7 @@ module.exports = function (robot) {
 
       gameOn = false;
 
-      msg.send("Answer is correct! Congratulations " + user.name + ".");
+      msg.send(msg.random(phrases.goodJob(user.name)));
       MyCloudant.userScored(user);
     }
   });
@@ -65,7 +66,7 @@ module.exports = function (robot) {
     MyCloudant.randomQuestion(function(trivia) {
       currentTrivia = trivia;
 
-      msg.send("New question!");
+      msg.send(msg.random(phrases.getReady()));
       msg.send(currentTrivia.question);
 
       setTimeout(function() {
