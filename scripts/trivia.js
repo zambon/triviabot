@@ -15,7 +15,9 @@ module.exports = function (robot) {
   var started = false;
 
   robot.respond(/h[ae]+lp/i, function (msg) {
-    msg.send("halp: help");
+    msg.send("halp:        help");
+    msg.send("leaderboard: Show top ten players");
+    msg.send("my score:    Show your current score");
   });
 
   robot.respond(/start game/i, function(msg) {
