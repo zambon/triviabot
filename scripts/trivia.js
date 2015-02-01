@@ -25,7 +25,7 @@ module.exports = function (robot) {
     gameLoop(msg);
     setInterval(function() {
       gameLoop(msg);
-    }, 20000);
+    }, 60000);
   });
 
   robot.hear(/.+/i, function(msg) {
@@ -56,7 +56,7 @@ module.exports = function (robot) {
           msg.send("Time's up! The answer was " + currentTrivia.answer + ".");
           gameOn = false;
         }
-      }, 10000);
+      }, 50000);
     });
   }
 }
