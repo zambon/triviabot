@@ -23,7 +23,8 @@
     "hubot-youtube": "^0.1.2",
     "cloudant": "*",
     "cfenv": "*",
-    "request": "*"
+    "request": "*",
+    "string": "*"
   },
   "engines": {
     "node": "0.10.x"

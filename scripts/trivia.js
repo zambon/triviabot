@@ -1,8 +1,11 @@
-var cfenv      = require("cfenv");
-var appEnv     = cfenv.getAppEnv();
+var cfenv = require("cfenv");
+var S     = require("string");
+
 var MyCloudant = require("../lib/my_cloudant");
 var jService   = require("../lib/jservice");
 var phrases    = require("../lib/talkshow_catch_phrases_generator");
+
+var appEnv     = cfenv.getAppEnv();
 
 MyCloudant = new MyCloudant(
   appEnv.getServiceCreds(/cloudant/i).username,
@@ -82,11 +85,11 @@ module.exports = function (robot) {
       currentTrivia = trivia;
 
       msg.send("_" + msg.random(phrases.getReady()) + "_");
-      msg.send("_" + currentTrivia.category.title + "_: *" + currentTrivia.question + "*");
+      msg.send("[" + currentTrivia.category.title + "] *" + S(currentTrivia.question).stripTags().s + "*");
 
       answerTimer = setTimeout(function() {
         if (gameOn) {
-          msg.send("_*Time's up!* The answer was *" + currentTrivia.answer + "*._");
+          msg.send("_*Time's up!* The answer was *" + S(currentTrivia.answer).stripTags().s + "*._");
           gameOn = false;
         }
       }, 50000);
