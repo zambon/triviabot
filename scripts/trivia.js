@@ -14,6 +14,7 @@ module.exports = function (robot) {
   var gameOn = false;
   var started = false;
   var changeQuestionTimer;
+  var answerTimer;
 
   robot.respond(/h[ae]+lp/i, function (msg) {
     msg.send("halp:        help");
@@ -58,6 +59,7 @@ module.exports = function (robot) {
 
       setTimeout(function() {
         clearInterval(changeQuestionTimer);
+        clearTimeout(answerTimer);
         startGame(msg);
       }, 5000);
     }
