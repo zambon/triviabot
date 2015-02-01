@@ -1,31 +1,16 @@
-var cfenv    = require("cfenv");
+var cfenv      = require("cfenv");
+var appEnv     = cfenv.getAppEnv();
+var MyCloudant = require("../lib/my_cloudant");
 
-var appEnv = cfenv.getAppEnv();
-
-console.log("*!&@#^(&!@^#&*!@^#(*&!^(*#&!^@");
-console.log(appEnv.getServiceCreds(/cloudant/i).username);
-console.log(appEnv.getServiceCreds(/cloudant/i).password);
-
-var MyCloudant = require("../lib/my_cloudant")(
+MyCloudant = new MyCloudant(
   appEnv.getServiceCreds(/cloudant/i).username,
   appEnv.getServiceCreds(/cloudant/i).password
 );
 
 module.exports = function (robot) {
 
-  currentTrivia = {};
-  gameOn = false;
-
-  questions = [
-    {
-      question: "Quem matou Mufasa?",
-      answer: "Skar"
-    },
-    {
-      question: "Quem sou eu?",
-      answer: "Silvio Santos"
-    }
-  ];
+  var currentTrivia;
+  var gameOn = false;
 
   robot.respond(/h[ae]+lp/i, function (msg) {
     msg.send("halp: help");
@@ -39,7 +24,7 @@ module.exports = function (robot) {
   });
 
   robot.hear(/.+/i, function(msg) {
-    if (!gameOn) return;
+    if (!gameOn || !currentTrivia) return;
 
     var guess = msg.message.text;
     if (guess.toLowerCase() === currentTrivia.answer.toLowerCase()) {
@@ -54,16 +39,18 @@ module.exports = function (robot) {
   function gameLoop(msg) {
     gameOn = true;
 
-    currentTrivia = MyCloudant.randomQuestion();
+    MyCloudant.randomQuestion(function(trivia) {
+      currentTrivia = trivia;
 
-    msg.send("New question!");
-    msg.send(currentTrivia.question);
+      msg.send("New question!");
+      msg.send(currentTrivia.question);
 
-    setTimeout(function() {
-      if (gameOn) {
-        msg.send("Time's up! The answer was " + currentTrivia.answer + ".");
-        gameOn = false;
-      }
-    }, 10000);
+      setTimeout(function() {
+        if (gameOn) {
+          msg.send("Time's up! The answer was " + currentTrivia.answer + ".");
+          gameOn = false;
+        }
+      }, 10000);
+    });
   }
 }
