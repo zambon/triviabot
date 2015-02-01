@@ -55,7 +55,7 @@ module.exports = function (robot) {
 
       gameOn = false;
 
-      msg.send(msg.random(phrases.goodJob(user.name)));
+      msg.send("_" + msg.random(phrases.goodJob("@"+user.name)) + "_");
       MyCloudant.userScored(user);
     }
   });
@@ -66,8 +66,8 @@ module.exports = function (robot) {
     MyCloudant.randomQuestion(function(trivia) {
       currentTrivia = trivia;
 
-      msg.send(msg.random(phrases.getReady()));
-      msg.send(currentTrivia.question);
+      msg.send("_" + msg.random(phrases.getReady()) + "_");
+      msg.send("*" + currentTrivia.question + "*");
 
       setTimeout(function() {
         if (gameOn) {
