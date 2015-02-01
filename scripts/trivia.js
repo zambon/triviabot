@@ -42,7 +42,7 @@ module.exports = function (robot) {
 
   robot.respond(/my score/i, function(msg) {
     MyCloudant.userScore(msg.message.user, function(response) {
-      msg.send(response._id + " " + response.score);
+      msg.send("@" + response._id + " " + response.score);
     });
   });
 
@@ -55,7 +55,7 @@ module.exports = function (robot) {
 
       gameOn = false;
 
-      msg.send("_" + msg.random(phrases.goodJob("@"+user.name)) + "_");
+      msg.send("_" + msg.random(phrases.goodJob("*@"+user.name+"*")) + "_");
       MyCloudant.userScored(user);
     }
   });
@@ -71,7 +71,7 @@ module.exports = function (robot) {
 
       setTimeout(function() {
         if (gameOn) {
-          msg.send("Time's up! The answer was '" + currentTrivia.answer + "'.");
+          msg.send("_*Time's up!* The answer was *" + currentTrivia.answer + "*._");
           gameOn = false;
         }
       }, 50000);
