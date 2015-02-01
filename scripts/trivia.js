@@ -1,3 +1,16 @@
+var cfenv    = require("cfenv");
+
+var appEnv = cfenv.getAppEnv();
+
+console.log("*!&@#^(&!@^#&*!@^#(*&!^(*#&!^@");
+console.log(appEnv.getServiceCreds(/cloudant/i).username);
+console.log(appEnv.getServiceCreds(/cloudant/i).password);
+
+var MyCloudant = require("../lib/my_cloudant")(
+  appEnv.getServiceCreds(/cloudant/i).username,
+  appEnv.getServiceCreds(/cloudant/i).password
+);
+
 module.exports = function (robot) {
 
   currentTrivia = {};
@@ -28,9 +41,9 @@ module.exports = function (robot) {
   robot.hear(/.+/i, function(msg) {
     if (!gameOn) return;
 
+    var guess = msg.message.text;
     if (guess.toLowerCase() === currentTrivia.answer.toLowerCase()) {
-      var user  = msg.message.user;
-      var guess = msg.message.text.replace(/@\w+\s/i, '');
+      var user = msg.message.user;
 
       gameOn = false;
 
@@ -41,8 +54,7 @@ module.exports = function (robot) {
   function gameLoop(msg) {
     gameOn = true;
 
-    randomIndex = Math.floor(Math.random() * questions.length);
-    currentTrivia = questions[randomIndex];
+    currentTrivia = MyCloudant.randomQuestion();
 
     msg.send("New question!");
     msg.send(currentTrivia.question);
