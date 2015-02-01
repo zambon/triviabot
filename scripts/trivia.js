@@ -13,6 +13,7 @@ module.exports = function (robot) {
   var currentTrivia;
   var gameOn = false;
   var started = false;
+  var changeQuestionTimer;
 
   robot.respond(/h[ae]+lp/i, function (msg) {
     msg.send("halp:        help");
@@ -22,13 +23,8 @@ module.exports = function (robot) {
 
   robot.respond(/start game/i, function(msg) {
     if (started) return;
-
     started = true;
-
-    gameLoop(msg);
-    setInterval(function() {
-      gameLoop(msg);
-    }, 60000);
+    startGame(msg);
   });
 
   robot.respond(/leaderboard/i, function(msg) {
@@ -59,8 +55,20 @@ module.exports = function (robot) {
 
       msg.send("_" + msg.random(phrases.goodJob("*@"+user.name+"*")) + "_");
       MyCloudant.userScored(user);
+
+      setTimeout(function() {
+        clearInterval(changeQuestionTimer);
+        startGame(msg);
+      }, 5000);
     }
   });
+
+  function startGame(msg) {
+    gameLoop(msg);
+    changeQuestionTimer = setInterval(function() {
+      gameLoop(msg);
+    }, 60000);
+  }
 
   function gameLoop(msg) {
     gameOn = true;
@@ -71,7 +79,7 @@ module.exports = function (robot) {
       msg.send("_" + msg.random(phrases.getReady()) + "_");
       msg.send("*" + currentTrivia.question + "*");
 
-      setTimeout(function() {
+      answerTimer = setTimeout(function() {
         if (gameOn) {
           msg.send("_*Time's up!* The answer was *" + currentTrivia.answer + "*._");
           gameOn = false;
