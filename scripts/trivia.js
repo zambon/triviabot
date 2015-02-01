@@ -11,12 +11,17 @@ module.exports = function (robot) {
 
   var currentTrivia;
   var gameOn = false;
+  var started = false;
 
   robot.respond(/h[ae]+lp/i, function (msg) {
     msg.send("halp: help");
   });
 
   robot.respond(/start game/i, function(msg) {
+    if (started) return;
+
+    started = true;
+
     gameLoop(msg);
     setInterval(function() {
       gameLoop(msg);
@@ -50,6 +55,7 @@ module.exports = function (robot) {
       gameOn = false;
 
       msg.send("Answer is correct! Congratulations " + user.name + ".");
+      MyCloudant.userScored(user);
     }
   });
 
