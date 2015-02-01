@@ -23,6 +23,23 @@ module.exports = function (robot) {
     }, 20000);
   });
 
+  robot.respond(/leaderboard/i, function(msg) {
+    MyCloudant.leaderboard(function(leaderboard) {
+      var array = [];
+      leaderboard.forEach(function(el, idx, arr) {
+        array.push((idx + 1) + ") " + el.value + " " + el.key);
+      });
+
+      msg.send(array.join('\n'));
+    });
+  });
+
+  robot.respond(/my score/i, function(msg) {
+    MyCloudant.userScore(msg.message.user, function(response) {
+      msg.send(response._id + " " + response.score);
+    });
+  });
+
   robot.hear(/.+/i, function(msg) {
     if (!gameOn || !currentTrivia) return;
 
@@ -47,7 +64,7 @@ module.exports = function (robot) {
 
       setTimeout(function() {
         if (gameOn) {
-          msg.send("Time's up! The answer was " + currentTrivia.answer + ".");
+          msg.send("Time's up! The answer was '" + currentTrivia.answer + "'.");
           gameOn = false;
         }
       }, 10000);
