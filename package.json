@@ -22,7 +22,8 @@
     "hubot-slack": "^3.2.1",
     "hubot-youtube": "^0.1.2",
     "cloudant": "*",
-    "cfenv": "*"
+    "cfenv": "*",
+    "request": "*"
   },
   "engines": {
     "node": "0.10.x"

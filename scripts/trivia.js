@@ -1,12 +1,15 @@
 var cfenv      = require("cfenv");
 var appEnv     = cfenv.getAppEnv();
 var MyCloudant = require("../lib/my_cloudant");
+var jService   = require("../lib/jservice");
 var phrases    = require("../lib/talkshow_catch_phrases_generator");
 
 MyCloudant = new MyCloudant(
   appEnv.getServiceCreds(/cloudant/i).username,
   appEnv.getServiceCreds(/cloudant/i).password
 );
+
+jService = new jService();
 
 module.exports = function (robot) {
 
@@ -75,11 +78,11 @@ module.exports = function (robot) {
   function gameLoop(msg) {
     gameOn = true;
 
-    MyCloudant.randomQuestion(function(trivia) {
+    jService.randomQuestion(function(trivia) {
       currentTrivia = trivia;
 
       msg.send("_" + msg.random(phrases.getReady()) + "_");
-      msg.send("*" + currentTrivia.question + "*");
+      msg.send("_" + currentTrivia.category.title + "_: *" + currentTrivia.question + "*");
 
       answerTimer = setTimeout(function() {
         if (gameOn) {
