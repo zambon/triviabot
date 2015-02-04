@@ -14,18 +14,23 @@ MyCloudant = new MyCloudant(
 
 jService = new jService();
 
-module.exports = function (robot) {
+module.exports = function(robot) {
+  var started = false;
+  var gameOn  = false;
 
   var currentTrivia;
-  var gameOn = false;
-  var started = false;
   var changeQuestionTimer;
   var answerTimer;
 
-  robot.respond(/h[ae]+lp/i, function (msg) {
-    msg.send("halp:        help");
-    msg.send("leaderboard: Show top ten players");
-    msg.send("my score:    Show your current score");
+  //
+  // Commands
+  //
+  robot.respond(/h[ae]+lp/i, function(msg) {
+    msg.send("*halp*: This help menu");
+    msg.send("*start game*: Start a new trivia game");
+    msg.send("*stop game*: Stop the current trivia game");
+    msg.send("*leaderboard*: Show top ten players");
+    msg.send("*my score*: Show your current score");
   });
 
   robot.respond(/start game/i, function(msg) {
@@ -34,14 +39,28 @@ module.exports = function (robot) {
     startGame(msg);
   });
 
+  robot.respond(/stop game/i, function(msg) {
+    if (!started) return;
+
+    msg.send("Game over! Use the *start game* command to start a new one!");
+
+    started       = false;
+    gameOn        = false;
+    currentTrivia = null;
+
+    clearInterval(changeQuestionTimer);
+    clearTimeout(answerTimer);
+  });
+
   robot.respond(/leaderboard/i, function(msg) {
     MyCloudant.leaderboard(function(leaderboard) {
+
       var array = [];
       leaderboard.forEach(function(el, idx, arr) {
         array.push((idx + 1) + ") " + el.value + " " + el.key);
       });
 
-      msg.send(array.join('\n'));
+      msg.send(array.join("\n"));
     });
   });
 
@@ -51,11 +70,14 @@ module.exports = function (robot) {
     });
   });
 
+  //
+  // Answers
+  //
   robot.hear(/.+/i, function(msg) {
     if (!gameOn || !currentTrivia) return;
 
     var guess = msg.message.text;
-    if (guess.toLowerCase() === currentTrivia.answer.toLowerCase()) {
+    if (guess.toLowerCase() === S(currentTrivia.answer).stripTags().s.toLowerCase()) {
       var user = msg.message.user;
 
       gameOn = false;
@@ -71,6 +93,9 @@ module.exports = function (robot) {
     }
   });
 
+  //
+  // Game loop
+  //
   function startGame(msg) {
     gameLoop(msg);
     changeQuestionTimer = setInterval(function() {
