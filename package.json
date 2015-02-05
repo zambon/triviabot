@@ -1,12 +1,13 @@
 {
   "name": "triviabot",
-  "version": "0.0.0",
+  "version": "0.1.0",
   "private": true,
   "author": "Henrique Zambon <henrique.zambon@gmail.com>",
   "description": "It's trivia time!",
   "dependencies": {
     "cfenv": "^1.0.0",
     "cloudant": "^1.0.0-beta3",
+    "fast-levenshtein": "^1.0.6",
     "hubot": "^2.11.0",
     "hubot-diagnostics": "0.0.1",
     "hubot-google-images": "^0.1.2",
@@ -21,10 +22,8 @@
     "hubot-shipit": "^0.1.1",
     "hubot-slack": "^3.2.1",
     "hubot-youtube": "^0.1.2",
-    "cloudant": "*",
-    "cfenv": "*",
-    "request": "*",
-    "string": "*"
+    "request": "^2.53.0",
+    "string": "^3.0.0"
   },
   "engines": {
     "node": "0.10.x"
