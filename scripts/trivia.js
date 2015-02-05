@@ -29,7 +29,7 @@ module.exports = function(robot) {
   //
   enterReplies = ["Hi", "Target Acquired", "Firing", "Hello friend.", "Gotcha", "I see you", "Hello", "Howdy"]
   robot.enter(function(msg) {
-    msg.send(msg.random(enterReplies));
+    msg.send(msg.random(enterReplies) + " " + msg.message.use + "!");
   });
 
   //
@@ -95,7 +95,7 @@ module.exports = function(robot) {
     var answer   = S(currentTrivia.answer).stripTags().s;
     var distance = levenshtein.get(guess.toLowerCase(), answer.toLowerCase());
 
-    if(distance < 5) {
+    if(distance < 3) {
       gameOn = false;
 
       var user = msg.message.user;
