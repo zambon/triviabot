@@ -22,6 +22,7 @@ module.exports = function(robot) {
   var currentTrivia;
   var changeQuestionTimer;
   var answerTimer;
+  var nextQuestionTimer;
 
   //
   // Greetings
@@ -61,6 +62,7 @@ module.exports = function(robot) {
 
     clearInterval(changeQuestionTimer);
     clearTimeout(answerTimer);
+    clearTimeout(nextQuestionTimer);
   });
 
   // Show top ten players and their scores
@@ -108,7 +110,7 @@ module.exports = function(robot) {
       msg.send(message);
       MyCloudant.userScored(user);
 
-      setTimeout(function() {
+      nextQuestionTimer = setTimeout(function() {
         clearInterval(changeQuestionTimer);
         clearTimeout(answerTimer);
         startGame(msg);
